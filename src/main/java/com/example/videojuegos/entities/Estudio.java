@@ -25,4 +25,12 @@ public class Estudio {
     @OneToMany(mappedBy = "estudio")
     private List<Videojuego> videojuegos;
 
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
 }
