@@ -34,7 +34,7 @@ public class Videojuego {
 
     @Min(value = 1, message = "El stock debe tener un mínimo de 1.")
     @Max(value = 10000, message = "El stock debe ser menor a 10000.")
-    private boolean stock;
+    private int stock;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "La fecha no puede ser nula.")
