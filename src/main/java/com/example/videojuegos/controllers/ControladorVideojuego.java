@@ -5,11 +5,18 @@ import com.example.videojuegos.services.ServicioCategoria;
 import com.example.videojuegos.services.ServicioEstudio;
 import com.example.videojuegos.services.ServicioVideojuego;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import javax.validation.Valid;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Calendar;
 import java.util.List;
 
 @Controller
@@ -81,7 +88,7 @@ public class ControladorVideojuego {
         try{
             model.addAttribute("categorias", this.svcCategoria.findAll());
             model.addAttribute("estudios", this.svcEstudio.findAll());
-            if(id == 0){
+            if(id==0){
                 model.addAttribute("videojuego", new Videojuego());
             }else{
                 model.addAttribute("videojuego", this.svcVideojuego.findById(id));
@@ -93,12 +100,53 @@ public class ControladorVideojuego {
         }
     }
 
-    @GetMapping("/formulario/videojuego/{id}")
-    public String guardarVideojuego(@ModelAttribute("videojuego") Videojuego videojuego, Model model, @PathVariable("id")long id){
+    @PostMapping("/formulario/videojuego/{id}")
+    public String guardarVideojuego(
+            @RequestParam("archivo") MultipartFile archivo,
+            @Valid @ModelAttribute("videojuego") Videojuego videojuego,
+            BindingResult result,
+            Model model, @PathVariable("id")long id){
         try{
+            model.addAttribute("categorias", this.svcCategoria.findAll());
+            model.addAttribute("estudios", this.svcEstudio.findAll());
+            if(result.hasErrors()){
+                return "views/formulario/videojuego";
+            }
+            String ruta = "C://Videojuegos/imagenes/";
+            int index = archivo.getOriginalFilename().indexOf(".");
+            String extension = "";
+            extension = "."+archivo.getOriginalFilename().substring(index+1);
+            String nombreFoto = Calendar.getInstance().getTimeInMillis()+extension;
+            Path rutaAbsoluta = id != 0 ? Paths.get(ruta + "//"+videojuego.getImagen()) :
+                    Paths.get(ruta+"//"+nombreFoto);
             if(id == 0){
+                if(archivo.isEmpty()){
+                    model.addAttribute("imageErrorMsg", "La imagen es requerida.");
+                    return "views/formulario/videojuego";
+                }
+                if(this.validarExtension(archivo)){
+                    model.addAttribute("imageErrorMsg", "La extensión no es válida.");
+                    return "views/formulario/videojuego";
+                }
+                if(archivo.getSize() >= 15000000){
+                    model.addAttribute("imageErrorMsg", "El peso del archivo excede 15MB.");
+                    return "views/formulario/videojuego";
+                }
+                Files.write(rutaAbsoluta, archivo.getBytes());
+                videojuego.setImagen(nombreFoto);
                 this.svcVideojuego.saveOne(videojuego);
             }else{
+                if(!archivo.isEmpty()){
+                    if(this.validarExtension(archivo)){
+                        model.addAttribute("imageErrorMsg", "La extensión no es válida.");
+                        return "views/formulario/videojuego";
+                    }
+                    if(archivo.getSize() >= 15000000){
+                        model.addAttribute("imageErrorMsg", "El peso del archivo excede 15MB.");
+                        return "views/formulario/videojuego";
+                    }
+                    Files.write(rutaAbsoluta, archivo.getBytes());
+                }
                 this.svcVideojuego.updateOne(videojuego, id);
             }
             return"redirect:/crud";
@@ -127,6 +175,16 @@ public class ControladorVideojuego {
         }catch (Exception e){
             model.addAttribute("error", e.getMessage());
             return "error";
+        }
+    }
+
+    public boolean validarExtension(MultipartFile archivo){
+        try{
+            ImageIO.read(archivo.getInputStream()).toString();
+            return true;
+        }catch (Exception e){
+            System.out.println(e);
+            return false;
         }
     }
 

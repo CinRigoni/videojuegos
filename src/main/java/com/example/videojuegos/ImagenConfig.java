@@ -7,9 +7,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class ImagenConfig implements WebMvcConfigurer {
 
-    public void addResourceHanlders(ResourceHandlerRegistry registry){
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry){
         WebMvcConfigurer.super.addResourceHandlers(registry);
-        registry.addResourceHandler("imagenes/**").addResourceLocations("file:/C:/Videojuegos/imagenes/");
+        registry.addResourceHandler("/imagenes/**").addResourceLocations("file:/C:/Videojuegos/imagenes/");
     }
 
 }

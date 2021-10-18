@@ -8,12 +8,12 @@
 <body>
 <nav th:replace="components/navbar :: nav_bar"></nav>
 <div class="container">
-    <div class="row">
+    <div class="row my-5">
         <div class="col-3">
-            <h3>CRUD Videojuego</h3>
+            <h4>CRUD Videojuego</h4>
         </div>
         <div class="col-9 d-flex flex-row-reverse">
-            <a href="@{formulario/videojuego/0}" class="btn btn.succes">Agregar videojuego</a>
+            <a th:href="@{/formulario/videojuego/0}" class="btn btn-success">Agregar Videojuego</a>
         </div>
     </div>
     <div class="row">
@@ -22,23 +22,23 @@
                 <thead>
                 <tr>
                     <th scope="col">ID</th>
-                    <th scope="col">Título</th>
+                    <th scope="col">Titulo</th>
                     <th scope="col">Precio</th>
                     <th scope="col">Stock</th>
                     <th scope="col">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="videojuego : ${videojuegos}" th:classappend="${videojuegos.activo} ? table-success : table-danger">
-                        <td th:text="${videojuego.id}"></td>
-                        <td th:text="${videojuego.titulo}"></td>
-                        <td th:text="${videojuego.precio}"></td>
-                        <td th:text="${videojuego.stock}"></td>
-                        <td>
-                            <a href="@{formulario/videojuego/{id}(id=${videojuego.id})}" class="btn btn-warning">Editar</a>
-                            <a th:if="${videojuego.activo}" href="@{eliminar/videojuego/{id}(id=${videojuego.id})}" class="btn btn-danger">Eliminar</a>
-                        </td>
-                    </tr>
+                <tr th:each="videojuego : ${videojuegos}" th:classappend="${videojuego.activo} ? table-success : table-danger">
+                    <td th:text="${videojuego.id}"></td>
+                    <td th:text="${videojuego.titulo}"></td>
+                    <td th:text="${videojuego.precio}"></td>
+                    <td th:text="${videojuego.stock}"></td>
+                    <td>
+                        <a th:href="@{/formulario/videojuego/{id}(id=${videojuego.id})}" class="btn btn-warning">Editar</a>
+                        <a th:if="${videojuego.activo}" th:href="@{/eliminar/videojuego/{id}(id=${videojuego.id})}" class="btn btn-danger">Eliminar</a>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>

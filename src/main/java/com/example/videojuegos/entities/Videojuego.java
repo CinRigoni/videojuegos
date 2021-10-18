@@ -20,13 +20,13 @@ public class Videojuego {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "{NotEmpty.Videojuego.titulo}")
+    @NotEmpty(message = "El título no debe estar vacio.")
     private String titulo;
 
     private String imagen;
 
-    @Min(value = 5, message = "El precio debe tener un mínimo de 5")
-    @Max(value = 10000, message = "El precio debe ser menor a 10000")
+    @Min(value = 5, message = "El precio mínimo debe ser de 5.")
+    @Max(value = 10000, message = "El precio debe ser menor a 10000.")
     private float precio;
 
     @Size(min = 5, max = 100, message = "La descripcion debe tener entre 5 y 100 caracteres.")
@@ -38,7 +38,7 @@ public class Videojuego {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "La fecha no puede ser nula.")
-    @PastOrPresent(message = "Debe ser igual o anterior a la fecha de hoy.")
+    @PastOrPresent(message = "La fecha debe ser igual o anterior a la fecha de hoy.")
     private Date fechaLanzamiento;
 
     private boolean activo = true;
@@ -59,5 +59,13 @@ public class Videojuego {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }
